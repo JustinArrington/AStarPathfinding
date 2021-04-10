@@ -14,14 +14,13 @@ import random
 from Path import Path
 from MinPQ import PriorityQueue
 
-
 WIDTH, HEIGHT = 900, 900
 COLOR_LIGHTBLUE = (30 / 255, 130 / 255, 230 / 255)
 COLOR_BLUE = (30 / 255, 30 / 255, 230 / 255)
 COLOR_BLACK = (0, 0, 0)
 COLOR_RED = (1, 0, 0)
 COLOR_WHITE = (1, 1, 1)
-n = 15
+n = 25
 
 
 class ScatterTextWidget(BoxLayout):
@@ -35,8 +34,6 @@ class ScatterTextWidget(BoxLayout):
         self.grid = None
         self.topUILabel = self.ids['topUI']
         self.counter = 0
-
-
 
     def changeTextColor(self, *args):
         color = [random.random() for i in range(3)] + [1]
@@ -62,16 +59,15 @@ class ScatterTextWidget(BoxLayout):
         if self.path.found:
             Clock.unschedule(self.event)
         for c in self.sol:
-            self.drawSquare(x=c.x * self.squareSize, y=c.y * self.squareSize + self.label.y, size=self.squareSize -1,
+            self.drawSquare(x=c.x * self.squareSize, y=c.y * self.squareSize + self.label.y, size=self.squareSize - 1,
                             color=COLOR_WHITE)
         self.path.runSearch()
         self.sol = self.path.solution()
         for c in self.sol:
-            self.drawSquare(x=c.x * self.squareSize, y=c.y * self.squareSize + self.label.y, size=self.squareSize -1,
+            self.drawSquare(x=c.x * self.squareSize, y=c.y * self.squareSize + self.label.y, size=self.squareSize - 1,
                             color=COLOR_LIGHTBLUE)
         self.topUILabel.text = 'Paths searched: ' + str(self.counter)
         self.counter += 1
-
 
     def drawLine(self, x1, y1, x2, y2, width, **kwargs):
 
@@ -91,17 +87,17 @@ class ScatterTextWidget(BoxLayout):
             j = 0
             for y in grid[i]:
                 if grid[i][j] == 3:
-                    self.drawSquare(x=i * self.squareSize, y=j * self.squareSize + self.label.y, size=self.squareSize - 1,
-                                    color=COLOR_RED)
+                    self.drawSquare(x=i * self.squareSize, y=j * self.squareSize + self.label.y,
+                                    size=self.squareSize - 1, color=COLOR_RED)
                 elif grid[i][j] == 2:
-                    self.drawSquare(x=i * self.squareSize, y=j * self.squareSize + self.label.y, size=self.squareSize - 1,
-                                    color=COLOR_LIGHTBLUE)
+                    self.drawSquare(x=i * self.squareSize, y=j * self.squareSize + self.label.y,
+                                    size=self.squareSize - 1, color=COLOR_LIGHTBLUE)
                 elif grid[i][j] == 1:
-                    self.drawSquare(x=i * self.squareSize, y=j * self.squareSize + self.label.y, size=self.squareSize - 1,
-                                    color=COLOR_WHITE)
+                    self.drawSquare(x=i * self.squareSize, y=j * self.squareSize + self.label.y,
+                                    size=self.squareSize - 1, color=COLOR_WHITE)
                 else:
-                    self.drawSquare(x=i * self.squareSize, y=j * self.squareSize + self.label.y, size=self.squareSize - 1,
-                                    color=COLOR_BLACK)
+                    self.drawSquare(x=i * self.squareSize, y=j * self.squareSize + self.label.y,
+                                    size=self.squareSize - 1, color=COLOR_BLACK)
                 j += 1
             i += 1
 

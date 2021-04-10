@@ -16,7 +16,7 @@ class Grid:
 
         # Function to find distance between two Cells.
         def manhattan(self, start, goal):
-            return abs(goal.x - self.x) + abs(goal.y - self.y) - abs(start.x - self.x) - abs(start.y - self.y)
+            return abs(goal.x - self.x) + abs(goal.y - self.y) #- abs(start.x - self.x) - abs(start.y - self.y)
 
         def isOpen(self):
             return self.open
