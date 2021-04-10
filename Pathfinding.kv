@@ -1,0 +1,20 @@
+<ScatterTextWidget>:
+    orientation: 'vertical'
+    Label:
+        id: topUI
+        text: "topUI"
+        font_size: 50
+        size_hint_y: .1
+    RelativeLayout:
+        id: rLayout
+
+
+    BoxLayout:
+        size_hint_y: .1
+        Button:
+            id: myButton
+            text: "refresh grid"
+
+            font_size: 40
+            on_release: root.firstClicked()
+
