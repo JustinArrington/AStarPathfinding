@@ -19,7 +19,6 @@ class Path:
                 return True
             else:
                 return False
-# testing what happens when I change.
         def __lt__(self, other):
             if self.priority <= other.priority:
                 return True
