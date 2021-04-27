@@ -16,7 +16,7 @@ class Grid:
 
         # Function to find distance between two Cells.
         def manhattan(self, start, goal):
-            return abs(goal.x - self.x) + abs(goal.y - self.y) #- abs(start.x - self.x) - abs(start.y - self.y)
+            return abs(goal.x - self.x) + abs(goal.y - self.y)  # - abs(start.x - self.x) - abs(start.y - self.y)
 
         def isOpen(self):
             return self.open
@@ -40,15 +40,37 @@ class Grid:
             if self.y < self.n - 1:
                 array.append(self.outer_instance.grid[self.x][self.y + 1])
             return array
+        # Diagonal neighbors included:
+        # def neighbors(self):
+        #     array = []
+        #     if self.x > 0:
+        #         array.append(self.outer_instance.grid[self.x - 1][self.y])
+        #         if self.y > 0:
+        #             array.append(self.outer_instance.grid[self.x][self.y - 1])
+        #             array.append(self.outer_instance.grid[self.x - 1][self.y - 1])
+        #         if self.y < self.n - 1:
+        #             array.append(self.outer_instance.grid[self.x][self.y + 1])
+        #             array.append(self.outer_instance.grid[self.x - 1][self.y + 1])
+        #
+        #     if self.x < self.n - 1:
+        #         array.append(self.outer_instance.grid[self.x + 1][self.y])
+        #         if self.y > 0:
+        #             array.append(self.outer_instance.grid[self.x][self.y - 1])
+        #             array.append(self.outer_instance.grid[self.x + 1][self.y + 1])
+        #         if self.y < self.n - 1:
+        #             array.append(self.outer_instance.grid[self.x][self.y + 1])
+        #             array.append(self.outer_instance.grid[self.x + 1][self.y - 1])
+        #     return array
 
         # Helper toString function for debugging.
         def __str__(self):
             return "open: " + str(self.open) + " x: " + str(self.x) + " y: " + str(self.y)
 
     # Creates an empty array, sets n in the nxn array, and initailizes some variables.
-    def __init__(self, n):
+    def __init__(self, n, openChance=.2):
         self.grid = [[]]
         self.n = n
+        self.openChance = openChance
         self.goalX = None
         self.goalY = None
 
@@ -58,7 +80,7 @@ class Grid:
         self.goalX = random.randint(0, self.n - 1)
         self.goalY = random.randint(0, self.n - 1)
         print("New goal: ", self.goalX, self.goalY)
-        self.grid = [[self.Cell(random.random() > .15, y, x, self.n, self)
+        self.grid = [[self.Cell(random.random() > self.openChance, y, x, self.n, self)
                       for x in range(self.n)] for y in range(self.n)]
         self.grid[self.goalX][self.goalY].isGoal = True
         self.grid[self.goalX][self.goalY].open = True
@@ -70,6 +92,10 @@ class Grid:
     # Returns Cell at goal.
     def getGoal(self):
         return self.grid[self.goalX][self.goalY]
+
+    def setOpen(self, x, y, isOpen=False):
+        self.grid[x][y].setOpen(isOpen)
+
 
     # Returns the grid, reformatted, using 3 for the goalCell, 1 if the Cell is simply Open, and 0 otherwise.
     def getGrid(self):

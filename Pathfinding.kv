@@ -12,9 +12,21 @@
     BoxLayout:
         size_hint_y: .1
         Button:
-            id: myButton
+            id: btn_refreshGrid
             text: "refresh grid"
 
             font_size: 40
-            on_release: root.firstClicked()
+            on_release: root.refreshClicked()
+        Button:
+            id: btn_drawGrid
+            text: "draw grid"
+
+            font_size: 40
+            on_release: root.drawGridClicked()
+        Button:
+            id: btn_runSearch
+            text: "run search"
+
+            font_size: 40
+            on_release: root.startSearch()
 

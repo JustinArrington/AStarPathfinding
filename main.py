@@ -8,6 +8,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.graphics.vertex_instructions import (Rectangle, Ellipse, Line)
 from kivy.graphics.context_instructions import Color
 from kivy.core.window import Window
+from kivy.config import Config
 from kivy.animation import Animation
 from kivy.clock import Clock
 import random
@@ -20,13 +21,14 @@ COLOR_BLUE = (30 / 255, 30 / 255, 230 / 255)
 COLOR_BLACK = (0, 0, 0)
 COLOR_RED = (1, 0, 0)
 COLOR_WHITE = (1, 1, 1)
-n = 25
+n = 40
 
 
 class ScatterTextWidget(BoxLayout):
     def __init__(self, **kwargs):
         super(ScatterTextWidget, self).__init__(**kwargs)
         self.event = None
+        self.drawMode = False
         self.label = None
         self.sol = None
         self.squareSize = None
@@ -40,8 +42,9 @@ class ScatterTextWidget(BoxLayout):
         label = self.ids['topUI']
         label.color = color
 
-    def firstClicked(self, **kwargs):
+    def refreshClicked(self, **kwargs):
         Clock.unschedule(self.event)
+        # self.canvas.clear()
         self.counter = 0
         self.path = Path(n)
         self.grid = self.path.getGrid()
@@ -49,7 +52,46 @@ class ScatterTextWidget(BoxLayout):
         self.squareSize = self.label.size[1] / n
         self.drawGrid(self.grid.getGrid())
         self.sol = self.path.solution()
-        self.event = Clock.schedule_interval(self.pathSearch, 0.04)
+        self.event = Clock.schedule_interval(self.pathSearch, 0.02)
+
+    def drawGridClicked(self, **kwargs):
+        if not self.drawMode:
+            self.path = Path(n)
+            self.path.blankGrid()
+            self.grid = self.path.getGrid()
+            self.drawGrid(self.grid.getGrid())
+            self.sol = self.path.solution()
+        self.drawMode = not self.drawMode
+
+    def on_touch_down(self, touch):
+        if not self.drawMode:
+            super(ScatterTextWidget, self).on_touch_down(touch)
+            return
+        Clock.unschedule(self.event)
+        pos = touch.ox, touch.oy
+        print(pos)
+        x, y = int(pos[0] / self.squareSize), int((pos[1] - self.label.y) / self.squareSize)
+        print("(" + str(x) + ', ' + str(y) + ")")
+        self.path.setOpen(x, y)
+        self.drawGrid(self.grid.getGrid())
+        super(ScatterTextWidget, self).on_touch_down(touch)
+    def on_touch_move(self, touch):
+        if not self.drawMode:
+            super(ScatterTextWidget, self).on_touch_move(touch)
+            return
+        Clock.unschedule(self.event)
+        pos = touch.pos
+        #print(pos)
+        x, y = int(pos[0] / self.squareSize), int((pos[1] - self.label.y) / self.squareSize)
+        print("(" + str(x) + ', ' + str(y) + ")")
+        self.path.setOpen(x, y)
+        self.drawSquare(x=x * self.squareSize, y=y * self.squareSize + self.label.y, size=self.squareSize - 1,
+                        color=COLOR_BLACK)
+        super(ScatterTextWidget, self).on_touch_move(touch)
+    def startSearch(self):
+        Clock.unschedule(self.event)
+        self.event = Clock.schedule_interval(self.pathSearch, 0.02)
+
 
     def pathSearch(self, *args):
         if self.grid != self.path.grid.getGrid():
@@ -58,6 +100,9 @@ class ScatterTextWidget(BoxLayout):
             self.drawGrid(self.grid)
         if self.path.found:
             Clock.unschedule(self.event)
+            del self.grid
+            del self.path
+            return
         for c in self.sol:
             self.drawSquare(x=c.x * self.squareSize, y=c.y * self.squareSize + self.label.y, size=self.squareSize - 1,
                             color=COLOR_WHITE)
@@ -108,5 +153,6 @@ class PathfindingApp(App):
 
 
 if __name__ == "__main__":
+    Config.set('graphics', 'resizable', False)
     Window.size = (900, 1080)
     PathfindingApp().run()
