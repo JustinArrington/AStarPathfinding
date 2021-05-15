@@ -7,7 +7,6 @@ class Grid:
         # to the Grid that is creating the Cell
         def __init__(self, isOpen, x, y, N, outer_instance):
             self.open = isOpen
-            print(isOpen)
             self.x = x
             self.y = y
             self.n = N

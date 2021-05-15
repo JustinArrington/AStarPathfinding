@@ -21,7 +21,12 @@ COLOR_BLUE = (30 / 255, 30 / 255, 230 / 255)
 COLOR_BLACK = (0, 0, 0)
 COLOR_RED = (1, 0, 0)
 COLOR_WHITE = (1, 1, 1)
+COLOR_YELLOW = (1, 1, 0)
 n = 20
+
+Config.set('graphics', 'resizable', False)
+Config.set('input', 'mouse', 'mouse,disable_multitouch')
+Window.size = (850, 900)
 
 
 class ScatterTextWidget(BoxLayout):
@@ -58,41 +63,49 @@ class ScatterTextWidget(BoxLayout):
         self.path = Path(n, blankGrid=True)
         self.label = self.ids['rLayout']
         self.squareSize = self.label.size[1] / n
-        #self.path.blankGrid()
         self.grid = self.path.getGrid()
         self.drawGrid(self.grid.getGrid())
         self.sol = self.path.solution()
         self.drawMode = True
 
-
     def on_touch_down(self, touch):
         if not self.drawMode:
             super(ScatterTextWidget, self).on_touch_down(touch)
             return
-        Clock.unschedule(self.event)
-        pos = touch.ox, touch.oy
-        print(pos)
-        x, y = int(pos[0] / self.squareSize), int((pos[1] - self.label.y) / self.squareSize)
-        print("(" + str(x) + ', ' + str(y) + ")")
-        if 0 < x < self.squareSize * n and 0 < y < self.squareSize * n:
-            self.path.setClosed(x, y)
-            self.drawGrid(self.grid.getGrid())
-
+        if touch.button == 'left':
+            Clock.unschedule(self.event)
+            pos = touch.ox, touch.oy
+            x, y = int(pos[0] / self.squareSize), int((pos[1] - self.label.y) / self.squareSize)
+            print("(" + str(x) + ', ' + str(y) + ")")
+            if 0 <= x < self.squareSize * n and 0 <= y < self.squareSize * n:
+                self.path.setClosed(x, y)
+                self.drawSquare(x=x * self.squareSize, y=y * self.squareSize + self.label.y, size=self.squareSize - 1,
+                                color=COLOR_BLACK)
+        elif touch.button == 'right':
+            pos = touch.ox, touch.oy
+            x, y = int(pos[0] / self.squareSize), int((pos[1] - self.label.y) / self.squareSize)
+            print("(" + str(x) + ', ' + str(y) + ")")
+            if 0 <= x < self.squareSize * n and 0 <= y < self.squareSize * n:
+                self.path.setStartCell(x, y)
+                self.drawGrid(self.grid.getGrid())
+                self.drawSquare(x=x * self.squareSize, y=y * self.squareSize + self.label.y, size=self.squareSize - 1,
+                                color=COLOR_YELLOW)
         super(ScatterTextWidget, self).on_touch_down(touch)
 
     def on_touch_move(self, touch):
         if not self.drawMode:
             super(ScatterTextWidget, self).on_touch_move(touch)
             return
-        Clock.unschedule(self.event)
-        pos = touch.pos
-        # print(pos)
-        x, y = int(pos[0] / self.squareSize), int((pos[1] - self.label.y) / self.squareSize)
-        print("(" + str(x) + ', ' + str(y) + ")")
-        if 0 <= x < self.squareSize * n and 0 <= y < self.squareSize * n:
-            self.path.setClosed(x, y)
-            self.drawSquare(x=x * self.squareSize, y=y * self.squareSize + self.label.y, size=self.squareSize - 1,
-                            color=COLOR_BLACK)
+        if touch.button == 'left':
+            Clock.unschedule(self.event)
+            pos = touch.pos
+            # print(pos)
+            x, y = int(pos[0] / self.squareSize), int((pos[1] - self.label.y) / self.squareSize)
+            print("(" + str(x) + ', ' + str(y) + ")")
+            if 0 <= x < self.squareSize * n and 0 <= y < self.squareSize * n:
+                self.path.setClosed(x, y)
+                self.drawSquare(x=x * self.squareSize, y=y * self.squareSize + self.label.y, size=self.squareSize - 1,
+                                color=COLOR_BLACK)
         super(ScatterTextWidget, self).on_touch_move(touch)
 
     def startSearch(self):
@@ -103,8 +116,8 @@ class ScatterTextWidget(BoxLayout):
         if self.path.found:
             Clock.unschedule(self.event)
             self.drawMode = False
-            #del self.grid
-            #del self.path
+            del self.grid
+            del self.path
             return
         if self.grid != self.path.grid.getGrid():
             self.grid = self.path.grid.getGrid()
@@ -160,6 +173,4 @@ class PathfindingApp(App):
 
 
 if __name__ == "__main__":
-    Config.set('graphics', 'resizable', False)
-    Window.size = (900, 900)
     PathfindingApp().run()
