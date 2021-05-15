@@ -31,13 +31,17 @@ class Path:
             else:
                 return False
 
-    def __init__(self, N):
+    def __init__(self, N, blankGrid=False):
         # PQ for sorting different paths.
         self.pq = PriorityQueue()
         self.n = N
         self.closedSet = []
         # Initialize and reset Grid.
-        self.grid = Grid(N)
+        if blankGrid:
+            self.grid = Grid(N, 0)
+        else:
+            self.grid = Grid(N)
+
         self.resetSearch()
         self.found = False
 
@@ -50,7 +54,7 @@ class Path:
         goalCell = self.grid.getGoal()
         startCell = self.grid.getCell(goalX, goalY)
         # Make sure the goal Cell is at least open.
-        self.grid.getCell(goalX, goalY).setOpen(True)
+        self.grid.setClosed(goalX, goalY, False)
         # Initialize a new PQ.
         self.pq = PriorityQueue()
         # Make a new Node at that startCell and add that to the PQ.
@@ -67,8 +71,8 @@ class Path:
         self.pq.put(newNode)
         self.closedSet = [newNode.c]
 
-    def setOpen(self, x, y):
-        self.grid.setOpen(x, y)
+    def setClosed(self, x, y, isOpen=False):
+        self.grid.setClosed(x, y, isOpen)
 
 
     # Runs a single iteration of the A* Algorithm. To find a path immediately, loop through this function. This is

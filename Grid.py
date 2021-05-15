@@ -7,6 +7,7 @@ class Grid:
         # to the Grid that is creating the Cell
         def __init__(self, isOpen, x, y, N, outer_instance):
             self.open = isOpen
+            print(isOpen)
             self.x = x
             self.y = y
             self.n = N
@@ -21,11 +22,8 @@ class Grid:
         def isOpen(self):
             return self.open
 
-        def setOpen(self, toSet):
+        def setClosed(self, toSet):
             self.open = toSet
-
-        def openPath(self):
-            self.isPath = True
 
         # Uses simple arithmetic to find if there is a Cell above, below, or on the right or left. Returns those
         # cells if they exist.
@@ -93,8 +91,8 @@ class Grid:
     def getGoal(self):
         return self.grid[self.goalX][self.goalY]
 
-    def setOpen(self, x, y, isOpen=False):
-        self.grid[x][y].setOpen(isOpen)
+    def setClosed(self, x, y, isOpen=False):
+        self.grid[x][y].setClosed(isOpen)
 
 
     # Returns the grid, reformatted, using 3 for the goalCell, 1 if the Cell is simply Open, and 0 otherwise.
